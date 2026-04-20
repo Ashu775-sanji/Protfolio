@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ashu | Web Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #060810;
+    --surface: #0d1120;
+    --card: #111827;
+    --border: #1e2d45;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --text: #e8f0fe;
+    --muted: #6b7fa3;
+    --mono: 'Space Mono', monospace;
+    --display: 'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--display);
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 48px;
+    border-bottom: 1px solid rgba(30,45,69,0.5);
+    backdrop-filter: blur(16px);
+    background: rgba(6,8,16,0.7);
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,255,0.12) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    pointer-events: none;
+  }
+  .hero-glow2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%);
+    bottom: 0; left: 200px;
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+  h1 {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.4s forwards;
+  }
+  h1 .accent { color: var(--accent); }
+  h1 .dim { color: var(--muted); }
+
+  .hero-sub {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--muted);
+    margin-top: 28px;
+    max-width: 520px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.6s forwards;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.8s forwards;
+  }
+
+  .btn-primary {
+    padding: 14px 32px;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 32px rgba(0,229,255,0.4);
+  }
+
+  .btn-outline {
+    padding: 14px 32px;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 80px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s 1s forwards;
+  }
+  .stat-num {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+    display: block;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 4px;
+  }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 48px; }
+
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-tag::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h2 {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  /* ── SERVICES ── */
+  #services { background: var(--surface); }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    margin-top: 64px;
+    border: 1px solid var(--border);
+  }
+
+  .service-card {
+    background: var(--card);
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+  .service-card:hover { background: #151f35; }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+
+  .service-icon {
+    font-size: 2rem;
+    margin-bottom: 24px;
+    display: block;
+  }
+  .service-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .service-desc {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .service-price {
+    display: inline-block;
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    border: 1px solid rgba(0,229,255,0.3);
+    padding: 6px 14px;
+  }
+
+  /* ── SKILLS ── */
+  #skills .skills-wrap {
+    margin-top: 64px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+  .skill-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .skill-item:hover { border-color: var(--accent); }
+  .skill-name {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .skill-name span { color: var(--accent); }
+  .skill-bar-bg {
+    height: 3px;
+    background: var(--border);
+    width: 100%;
+  }
+  .skill-bar {
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+    width: 0;
+  }
+
+  /* ── ABOUT ── */
+  #about { background: var(--surface); }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-top: 64px;
+    align-items: start;
+  }
+  .about-text {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 2;
+  }
+  .about-text p + p { margin-top: 20px; }
+  .about-text strong { color: var(--text); }
+  .about-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+  .about-list li {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--card);
+  }
+  .about-list li strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 0.82rem; }
+
+  /* ── CONTACT ── */
+  #contact {
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #contact::before {
+    content: '';
+    position: absolute;
+    width: 800px; height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 60%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .contact-sub {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--muted);
+    max-width: 500px;
+    margin: 24px auto 48px;
+    line-height: 1.8;
+  }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    #hero, section { padding: 80px 24px; }
+    .hero-stats { gap: 32px; flex-wrap: wrap; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">ASHU.DEV</a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <p class="hero-tag">// Available for freelance work</p>
+  <h1>
+    Hi, I'm <span class="accent">Ashu</span><br/>
+    <span class="dim">Web</span> Developer
+  </h1>
+  <p class="hero-sub">
+    I build clean, fast websites and web apps using HTML, CSS, JavaScript & React.
+    Student dev — affordable prices, serious work. Based in India 🇮🇳
+  </p>
+  <div class="hero-cta">
+    <a href="https://www.fiverr.com" target="_blank" class="btn-primary">Hire Me on Fiverr</a>
+    <a href="#services" class="btn-outline">See Services</a>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <span class="stat-num">3+</span>
+      <span class="stat-label">Technologies</span>
+    </div>
+    <div>
+      <span class="stat-num">Fast</span>
+      <span class="stat-label">Delivery</span>
+    </div>
+    <div>
+      <span class="stat-num">₹₹</span>
+      <span class="stat-label">Affordable</span>
+    </div>
+    <div>
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Dedication</span>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-tag">What I offer</div>
+  <h2>My Services</h2>
+  <div class="services-grid reveal">
+
+    <div class="service-card">
+      <span class="service-icon">🌐</span>
+      <div class="service-title">Basic Website</div>
+      <p class="service-desc">Clean, responsive HTML/CSS websites. Perfect for personal pages, small businesses, or school projects. Mobile-friendly and fast.</p>
+      <span class="service-price">STARTS AT ₹500</span>
+    </div>
+
+    <div class="service-card">
+      <span class="service-icon">🎯</span>
+      <div class="service-title">Landing Page</div>
+      <p class="service-desc">Attractive single-page designs to promote your product, service, or event. Includes call-to-action sections and contact form.</p>
+      <span class="service-price">STARTS AT ₹800</span>
+    </div>
+
+    <div class="service-card">
+      <span class="service-icon">⚛️</span>
+      <div class="service-title">React Web App</div>
+      <p class="service-desc">Interactive web applications built with React.js. Dynamic UIs, components, state management. Great for dashboards & tools.</p>
+      <span class="service-price">STARTS AT ₹1500</span>
+    </div>
+
+    <div class="service-card">
+      <span class="service-icon">💼</span>
+      <div class="service-title">Portfolio Website</div>
+      <p class="service-desc">Showcase your work professionally. Custom designed to highlight your skills, projects, and contact info beautifully.</p>
+      <span class="service-price">STARTS AT ₹700</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-tag">Tech Stack</div>
+  <h2>My Skills</h2>
+  <div class="skills-wrap reveal" id="skillsGrid">
+
+    <div class="skill-item">
+      <div class="skill-name">HTML5 <span>90%</span></div>
+      <div class="skill-bar-bg"><div class="skill-bar" data-width="90"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">CSS3 <span>80%</span></div>
+      <div class="skill-bar-bg"><div class="skill-bar" data-width="80"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">JavaScript <span>65%</span></div>
+      <div class="skill-bar-bg"><div class="skill-bar" data-width="65"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">React.js <span>55%</span></div>
+      <div class="skill-bar-bg"><div class="skill-bar" data-width="55"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">Java <span>70%</span></div>
+      <div class="skill-bar-bg"><div class="skill-bar" data-width="70"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">Python (Learning) <span>40%</span></div>
+      <div class="skill-bar-bg"><div class="skill-bar" data-width="40"></div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-tag">Who I am</div>
+  <h2>About Me</h2>
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <p>Hey! I'm <strong>Ashu</strong>, a CS student from <strong>India 🇮🇳</strong> passionate about building things on the web. I'm currently studying web development and AI/ML and love turning ideas into real, working websites.</p>
+      <p>I'm a beginner freelancer, which means I offer <strong>very affordable prices</strong> but give maximum effort to every project. My goal is to build my portfolio and reputation by delivering great work for every client.</p>
+      <p>I aim to become an <strong>AI Engineer</strong> someday, so I also understand modern tech trends and build with the future in mind.</p>
+    </div>
+    <ul class="about-list">
+      <li>
+        <strong>⚡ Fast Delivery</strong>
+        Most projects delivered within 2–5 days depending on complexity.
+      </li>
+      <li>
+        <strong>💬 Good Communication</strong>
+        I keep you updated throughout the project. No ghosting, ever.
+      </li>
+      <li>
+        <strong>🔄 Free Revisions</strong>
+        Not happy? I'll revise until you are. Your satisfaction matters.
+      </li>
+      <li>
+        <strong>📱 Mobile-First</strong>
+        Every website I build works perfectly on phones and desktops.
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-tag" style="justify-content:center">Get in touch</div>
+  <h2>Let's Work Together</h2>
+  <p class="contact-sub">Have a project in mind? I'd love to help! Message me on Fiverr or connect on social media.</p>
+  <div class="contact-links">
+    <a href="https://www.fiverr.com" target="_blank" class="btn-primary">💼 Hire on Fiverr</a>
+    <a href="mailto:your@email.com" class="btn-outline">✉️ Email Me</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 ASHU.DEV — All rights reserved</span>
+  <span>BUILT WITH ❤️ IN INDIA 🇮🇳</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Skill bars animate on scroll
+  const skillObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.skill-bar').forEach(bar => {
+          bar.style.width = bar.dataset.width + '%';
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  const sg = document.getElementById('skillsGrid');
+  if (sg) skillObserver.observe(sg);
+</script>
+</body>
+</html>
